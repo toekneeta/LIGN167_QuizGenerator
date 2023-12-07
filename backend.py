@@ -99,12 +99,12 @@ class QuizGenerator:
 	                              give an explanation in less than 50 words why they \
 	                              got the question right or wrong."
 		self.message_history.append({
-			'role': 'system',
-			'content': generate_feedback_sys_text
-		})
-		self.message_history.append({
 			'role': 'user',
 			'content': answer
+		})
+		self.message_history.append({
+			'role': 'system',
+			'content': generate_feedback_sys_text
 		})
 
 		response = self.get_chatgpt_response(self.message_history)
@@ -210,12 +210,12 @@ class QuizGenerator:
 								  based on the reason they are stuck,\
 				  				  to help them answer the question."
 		self.message_history.append({
-			'role': 'system',
-			'content': generate_hint_sys_text
-		})
-		self.message_history.append({
 			'role': 'user',
 			'content': reason
+		})
+		self.message_history.append({
+			'role': 'system',
+			'content': generate_hint_sys_text
 		})
 
 		hint = self.get_chatgpt_response(self.message_history)
