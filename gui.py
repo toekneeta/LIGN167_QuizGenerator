@@ -4,7 +4,7 @@ from backend import QuizGenerator
 
 class MultiLineInputDialog(simpledialog.Dialog):
     def body(self, master):
-        self.text = tk.Text(master, width=50, height=10)
+        self.text = tk.Text(master, width=50, height=10, font="Helvetica 10")
         self.text.pack()
         return self.text  # initial focus on the text widget
 
@@ -99,6 +99,7 @@ def generate_question():
     
     # Hide hint text area
     hint_label.pack_forget()
+    hint_text.configure(bg="#add8e6")
     hint_text.pack_forget()
 
     # get topic and difficulty
@@ -185,10 +186,11 @@ def provide_hint():
 
         # Unhide hint section and show the hint response
         hint_label.pack(side=tk.TOP, padx=10, pady=10)
-        hint_text.config(state=tk.NORMAL)
+        hint_text.config(state=tk.NORMAL, font="Helvetica 10")
         hint_text.insert(tk.END, response)
         hint_text.insert(tk.END, "\n\n")
         hint_text.pack(side=tk.TOP, padx=200, pady=10)
+        hint_text.config(bg = "#FFFFFF")
         hint_text.config(state=tk.DISABLED)
 
 qg = QuizGenerator()
@@ -286,14 +288,14 @@ user_feedback_text.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Create and place the hint text area
-hint_label = tk.Label(left_frame, text="Hint:")
-hint_text = tk.Text(left_frame, height=10, width=40, wrap='word', state='disabled')
+hint_label = tk.Label(left_frame, text="Hint:", font=label_font, background=bg_color)
+hint_text = tk.Text(left_frame, height=15, width=60, wrap='word', state='disabled')
 
 # Create and place the submit button
 submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, command=generate_feedback, font=label_font)
 submit_button.pack(side=tk.TOP, padx=10, pady=10)
 
-# Create and place the help button
+# Create and place the hint button
 hint_button = tk.Button(bottom_frame, text="Hint", width=4, command=provide_hint, font=label_font)
 hint_button.pack(side=tk.TOP, padx=10, pady=5)
 
