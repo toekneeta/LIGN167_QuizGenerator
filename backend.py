@@ -35,6 +35,16 @@ class QuizGenerator:
 		self.correct_counter = {topic: {difficulty: 0 for difficulty in self.difficulty_list} for topic in self.topics_list}
 		self.correct = 0
 
+		# all past dialog for current question
+		self.message_history = []
+
+	def get_chatgpt_response(self, messages):
+		response = self.client.chat.completions.create(
+		    model=self.model,
+		    messages=messages
+	    )
+		return response.choices[0].message.content
+
 	def generate_question(self, topic, difficulty):
 		generate_question_sys_text = "Your role is to generate quiz questions for a class on \
 	                              deep learning for natural language understanding. \
@@ -59,18 +69,21 @@ class QuizGenerator:
 
 			for question in self.question_history[topic]:
 			    generate_question_user_text += question + " "
-
-
-	    # generate the question
-		gpt_generate_question = self.client.chat.completions.create(
-		    model=self.model,
-		    messages=[
+		
+		# Restart message history
+		self.message_history = [
 		        {'role': 'system', "content": generate_question_sys_text},
 		        {'role': 'user', "content": generate_question_user_text}
-	    	]
-	    )
+	    ]
 
-		question = gpt_generate_question.choices[0].message.content
+	    # generate the question
+		question = self.get_chatgpt_response(self.message_history)
+		
+		# add question to message history
+		self.message_history.append({
+			'role': 'assistant',
+			'content': question
+		})
 
 	    # add question to question history for that topic
 		self.question_history[topic].append(question)
@@ -79,29 +92,22 @@ class QuizGenerator:
 
 	def provide_feedback(self, question, answer, topic, difficulty):
 		generate_feedback_sys_text = "Your role is to provide feedback for the user \
-	                              on their answer to a question. You will be \
-	                              provided the question and an answer. You will \
+	                              on their answer to a question. You will \
 	                              then start your response either with the word \
 	                              correct or incorrect depending on if the user \
 	                              got the question right or wrong. Then, you will \
 	                              give an explanation in less than 50 words why they \
 	                              got the question right or wrong."
+		self.message_history.append({
+			'role': 'user',
+			'content': answer
+		})
+		self.message_history.append({
+			'role': 'system',
+			'content': generate_feedback_sys_text
+		})
 
-		generate_feedback_user_text = 'The question was: "' + \
-		                              question + \
-		                              '" The answer the user gave to the question was "' + \
-		                              answer + '"'
-
-		gpt_generate_feedback = self.client.chat.completions.create(
-		    model=self.model,
-		    messages=[
-		        {'role': 'system', "content": generate_feedback_sys_text},
-		        {'role': 'user', "content": generate_feedback_user_text}
-		    ]
-	    )
-
-		response = gpt_generate_feedback.choices[0].message.content
-		
+		response = self.get_chatgpt_response(self.message_history)
 		
 		# if answer is correct, update correct_counter
 		if response.split()[0].lower().strip('.,!') == "correct":
@@ -111,6 +117,12 @@ class QuizGenerator:
 		# update the answered_counter
 		self.answered_counter[topic][difficulty] += 1
 		self.answered += 1
+
+		# add response to message history
+		self.message_history.append({
+			'role': 'assistant',
+			'content': response
+		})
 
 		return response
 
@@ -186,22 +198,31 @@ class QuizGenerator:
 		                                ', '.join(sorted_struggled_topics) + ". Please provide " + \
 		                                "study tips for each topic."
 
-		gpt_generate_study_tips = self.client.chat.completions.create(
-		    model=self.model,
-		    messages=[
+		study_tips = self.get_chatgpt_response([
 		        {'role': 'system', "content": generate_study_tips_sys_text},
 		        {'role': 'user', "content": generate_study_tips_user_text}
-		    ]
-	    )
-
-		study_tips = gpt_generate_study_tips.choices[0].message.content
+		])
 
 		return [overall_accuracy_rate, progress_report_stats, sorted_struggled_topics, study_tips]
+	
+	def provide_hint(self, reason):
+		generate_hint_sys_text = "Your role is to provide a brief hint for the user, \
+								  based on the reason they are stuck,\
+				  				  to help them answer the question."
+		self.message_history.append({
+			'role': 'user',
+			'content': reason
+		})
+		self.message_history.append({
+			'role': 'system',
+			'content': generate_hint_sys_text
+		})
 
+		hint = self.get_chatgpt_response(self.message_history)
 
+		self.message_history.append({
+			'role': 'assistant',
+			'content': hint
+		})
 
-
-
-
-
-
+		return hint

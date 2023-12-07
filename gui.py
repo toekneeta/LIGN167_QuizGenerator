@@ -1,6 +1,15 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, simpledialog
 from backend import QuizGenerator
+
+class MultiLineInputDialog(simpledialog.Dialog):
+    def body(self, master):
+        self.text = tk.Text(master, width=50, height=10)
+        self.text.pack()
+        return self.text  # initial focus on the text widget
+
+    def apply(self):
+        self.result = self.text.get("1.0", tk.END)  # get text from Text widget
 
 # Function to generate feedback
 def generate_feedback():
@@ -20,8 +29,6 @@ def generate_feedback():
 
     user_feedback_text.config(state='disabled')
     question_feedback_text.config(state='disabled')
-
-    
 
     
 # Function to generate progress report
@@ -90,6 +97,10 @@ def generate_question():
     question_feedback_text.config(state='normal')
     question_feedback_text.delete("1.0", tk.END)
     
+    # Hide hint text area
+    hint_label.pack_forget()
+    hint_text.pack_forget()
+
     # get topic and difficulty
     topic = topic_combobox.get()
     difficulty = difficulty_combobox.get()
@@ -157,6 +168,28 @@ def open_help():
 
     guide_text.configure(state="disabled")
     guide_text.pack(anchor='w')
+
+def get_user_hint_reason():
+    dialog = MultiLineInputDialog(root, title="What are you having trouble with?")
+    return dialog.result
+
+def provide_hint():
+    # Do nothing if no question is active
+    if not question_feedback_text.get("1.0", tk.END).strip():
+        return
+    
+    reason = get_user_hint_reason()
+    if reason:
+        reason = reason.strip()
+        response = qg.provide_hint(reason)
+
+        # Unhide hint section and show the hint response
+        hint_label.pack(side=tk.TOP, padx=10, pady=10)
+        hint_text.config(state=tk.NORMAL)
+        hint_text.insert(tk.END, response)
+        hint_text.insert(tk.END, "\n\n")
+        hint_text.pack(side=tk.TOP, padx=200, pady=10)
+        hint_text.config(state=tk.DISABLED)
 
 qg = QuizGenerator()
 
@@ -252,10 +285,17 @@ user_feedback_text = tk.Text(right_frame, height=15, width=60, wrap='word', stat
 user_feedback_text.pack(side=tk.TOP, padx=10, pady=10)
 
 
+# Create and place the hint text area
+hint_label = tk.Label(left_frame, text="Hint:")
+hint_text = tk.Text(left_frame, height=10, width=40, wrap='word', state='disabled')
+
 # Create and place the submit button
 submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, command=generate_feedback, font=label_font)
 submit_button.pack(side=tk.TOP, padx=10, pady=10)
 
+# Create and place the help button
+hint_button = tk.Button(bottom_frame, text="Hint", width=4, command=provide_hint)
+hint_button.pack(side=tk.TOP, padx=10, pady=5)
 
 # Create and place the generate progress report button
 progress_report_button = tk.Button(bottom_frame, text="Generate \nProgress Report", height=2, width=15, command=generate_progress_report, font=label_font)
