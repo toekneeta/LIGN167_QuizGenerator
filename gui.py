@@ -60,7 +60,7 @@ def generate_progress_report():
                 e.insert(tk.END, str(progress_report_stats[i-1][j]) + "%")
 
 
-    progress_text = tk.Text(progress_window, height=30)
+    progress_text = tk.Text(progress_window, height=30, font="Arial 10")
     progress_text.grid(row=len(topics_list) + 2, column=0, columnspan=8)
 
     if overall_accuracy_rate == -1:
@@ -102,7 +102,7 @@ def generate_question():
 
 def open_help():
     # Create a new top-level window
-    help_window = tk.Toplevel()
+    help_window = tk.Toplevel(background=bg_color)
     help_window.title("Help")
 
     # Help text with bold parts
@@ -185,80 +185,85 @@ root = tk.Tk()
 root.title("Quiz Generator")
 
 # Set the size of the window
-root.geometry("1600x800")
+root.geometry("1600x1000")
+
+# Set fonts and colors
+label_font = "Helvetica 12"
+text_font = "Helvetica 10"
+bg_color = "light blue"
 
 # Create frames for layout
-top_frame = tk.Frame(root)
+top_frame = tk.Frame(root, background=bg_color)
 top_frame.pack(side=tk.TOP, fill=tk.X)
 
-bottom_frame = tk.Frame(root)
+bottom_frame = tk.Frame(root, background=bg_color)
 bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
 
-right_frame = tk.Frame(root)
+right_frame = tk.Frame(root, background=bg_color)
 right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
-left_frame = tk.Frame(root)
+left_frame = tk.Frame(root, background=bg_color)
 left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
 # Create and place the topic selection widgets
-topic_label = tk.Label(top_frame, text="Select Topic:")
+topic_label = tk.Label(top_frame, text="Select Topic:", font=label_font, background=bg_color)
 topic_label.pack(side=tk.TOP, padx=5, pady=5)
 
-topic_combobox = ttk.Combobox(top_frame, values=topics_list, state="readonly", width=45)
+topic_combobox = ttk.Combobox(top_frame, values=topics_list, state="readonly", width=45, font=label_font)
 topic_combobox.current(0)
 topic_combobox.pack(side=tk.TOP, padx=5, pady=5)
 
 
 # Create and place the difficulty selection widgets
-difficulty_label = tk.Label(top_frame, text="Select Difficulty:")
+difficulty_label = tk.Label(top_frame, text="Select Difficulty:", font=label_font, background=bg_color)
 difficulty_label.pack(side=tk.TOP, padx=5, pady=5)
 
-difficulty_combobox = ttk.Combobox(top_frame, values=difficulty_list, state="readonly")
+difficulty_combobox = ttk.Combobox(top_frame, values=difficulty_list, state="readonly", font=label_font)
 difficulty_combobox.current(0)
 difficulty_combobox.pack(side=tk.TOP, padx=5, pady=5)
 
 
 # Create and place the generate question button
-generate_button = tk.Button(top_frame, text="Generate Question", command=generate_question)
+generate_button = tk.Button(top_frame, text="Generate Question", command=generate_question, font=label_font)
 generate_button.pack(side=tk.TOP, padx=5, pady=5)
 
 
 # Create and place the question and feedback text area
-question_feedback_label = tk.Label(left_frame, text="Question:")
+question_feedback_label = tk.Label(left_frame, text="Question:", font=label_font, background=bg_color)
 question_feedback_label.pack(side=tk.TOP, padx=10, pady=10)
 
-question_feedback_text = tk.Text(left_frame, height=10, width=40, wrap='word', state='disabled')
+question_feedback_text = tk.Text(left_frame, height=15, width=60, wrap='word', state='disabled', font=text_font)
 question_feedback_text.pack(side=tk.TOP, padx=200, pady=10)
 
 
 # Create and place the user answer text area
-user_answer_label = tk.Label(right_frame, text="Your Answer:")
+user_answer_label = tk.Label(right_frame, text="Your Answer:", font=label_font, background=bg_color)
 user_answer_label.pack(side=tk.TOP, padx=10, pady=10)
 
-user_answer_text = tk.Text(right_frame, height=10, width=40)
+user_answer_text = tk.Text(right_frame, height=15, width=60, font=text_font)
 user_answer_text.pack(side=tk.TOP, padx=200, pady=10)
 
 
 # Create and place the feedback text area
-user_feedback_label = tk.Label(right_frame, text="Feedback:")
+user_feedback_label = tk.Label(right_frame, text="Feedback:", font=label_font, background=bg_color)
 user_feedback_label.pack(side=tk.TOP, padx=10, pady=10)
 
-user_feedback_text = tk.Text(right_frame, height=20, width=40, wrap='word', state='disabled')
+user_feedback_text = tk.Text(right_frame, height=15, width=60, wrap='word', state='disabled', font=text_font)
 user_feedback_text.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Create and place the submit button
-submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, command=generate_feedback)
+submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, command=generate_feedback, font=label_font)
 submit_button.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Create and place the generate progress report button
-progress_report_button = tk.Button(bottom_frame, text="Generate \nProgress Report", height=2, width=15, command=generate_progress_report)
+progress_report_button = tk.Button(bottom_frame, text="Generate \nProgress Report", height=2, width=15, command=generate_progress_report, font=label_font)
 progress_report_button.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Add Help button
-help_button = tk.Button(top_frame, text="Help", command=open_help)
+help_button = tk.Button(top_frame, text="Help", command=open_help, font=label_font)
 help_button.pack(side=tk.TOP, padx=5, pady=5)
 
 # Run the application
