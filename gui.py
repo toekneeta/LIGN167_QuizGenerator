@@ -100,6 +100,8 @@ def generate_question():
     # Hide hint text area
     hint_label.pack_forget()
     hint_text.configure(bg="#add8e6")
+    hint_text.config(state='normal')
+    hint_text.delete("1.0", tk.END)
     hint_text.pack_forget()
 
     # get topic and difficulty
@@ -114,26 +116,8 @@ def generate_question():
 
 def open_help():
     # Create a new top-level window
-    help_window = tk.Toplevel(background=bg_color)
+    help_window = tk.Toplevel(background='white')
     help_window.title("Help")
-
-    # Help text with bold parts
-    help_text = (
-        "Welcome to the **LIGN 167 Quiz Generator**!\n\n"
-        "Here's how to get started:\n\n"
-        "1) Select a topic from the dropdown menu\n"
-        "2) Select a difficulty from the dropdown menu\n"
-        "3) Click the **Generate Question** button to create a new question\n"
-        "4) A question will appear in the **Question** box\n"
-        "5) Type your answer in the **Answer** box on the right\n"
-        "6) Click the **Submit** button at the bottom\n"
-        "7) Feedback will be provided in the **Feedback** box below the **Answer** box\n"
-        "8) Repeat!\n\n"
-        "You may also click on the **Generate Progress Report** button that will \n"
-        "generate a progress report with your overall question accuracy, the topics and difficulties \n"
-        "that you've covered, the topics you did well in and/or didn't do well in, \n"
-        "and tips on how to improve!"
-    )
 
     guide_text = tk.Text(help_window, font="Helvetica 12")
     guide_text.tag_configure("bold", font="Helvetica 12 bold")
@@ -215,17 +199,18 @@ topics_list = [
 
 difficulty_list =  ['Easy', 'Medium', 'Hard']
 
+# Set fonts and colors
+label_font = "Helvetica 12"
+text_font = "Helvetica 10"
+bg_color = "light blue"
+
 # Create the main window
 root = tk.Tk()
 root.title("Quiz Generator")
 
 # Set the size of the window
 root.geometry("1600x1000")
-
-# Set fonts and colors
-label_font = "Helvetica 12"
-text_font = "Helvetica 10"
-bg_color = "light blue"
+root.resizable(width=False, height=False)
 
 # Create frames for layout
 top_frame = tk.Frame(root, background=bg_color)
@@ -307,6 +292,7 @@ progress_report_button.pack(side=tk.TOP, padx=10, pady=10)
 # Add Help button
 help_button = tk.Button(top_frame, text="Help", command=open_help, font=label_font)
 help_button.pack(side=tk.TOP, padx=5, pady=5)
+
 
 # Run the application
 root.mainloop()

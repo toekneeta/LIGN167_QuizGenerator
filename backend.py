@@ -3,7 +3,7 @@ from openai import OpenAI
 
 class QuizGenerator:
 	def __init__(self):
-		self.model = "gpt-3.5-turbo-1106"
+		self.model = "gpt-4-1106-preview" # "gpt-3.5-turbo-1106" 
 		self.client = OpenAI()
 
 		self.topics_list = [
