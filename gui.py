@@ -174,7 +174,7 @@ topics_list = [
             "Transformers",
             "Autoregressive Language Modeling",
             "Masked Language Modeling",
-            "Encoder-decoder Architectures"
+            "Encoder-Decoder Architectures"
 ]
 
 
@@ -185,7 +185,7 @@ root = tk.Tk()
 root.title("Quiz Generator")
 
 # Set the size of the window
-root.geometry("800x600")
+root.geometry("1600x800")
 
 # Create frames for layout
 top_frame = tk.Frame(root)
@@ -204,7 +204,7 @@ left_frame.pack(side=tk.LEFT, fill=tk.Y)
 topic_label = tk.Label(top_frame, text="Select Topic:")
 topic_label.pack(side=tk.TOP, padx=5, pady=5)
 
-topic_combobox = ttk.Combobox(top_frame, values=topics_list, state="readonly")
+topic_combobox = ttk.Combobox(top_frame, values=topics_list, state="readonly", width=45)
 topic_combobox.current(0)
 topic_combobox.pack(side=tk.TOP, padx=5, pady=5)
 
@@ -225,43 +225,41 @@ generate_button.pack(side=tk.TOP, padx=5, pady=5)
 
 # Create and place the question and feedback text area
 question_feedback_label = tk.Label(left_frame, text="Question:")
-question_feedback_label.pack(side=tk.TOP, padx=5, pady=5)
+question_feedback_label.pack(side=tk.TOP, padx=10, pady=10)
 
 question_feedback_text = tk.Text(left_frame, height=10, width=40, wrap='word', state='disabled')
-question_feedback_text.pack(side=tk.TOP, padx=5, pady=5)
+question_feedback_text.pack(side=tk.TOP, padx=200, pady=10)
 
 
 # Create and place the user answer text area
 user_answer_label = tk.Label(right_frame, text="Your Answer:")
-user_answer_label.pack(side=tk.TOP, padx=5, pady=5)
+user_answer_label.pack(side=tk.TOP, padx=10, pady=10)
 
 user_answer_text = tk.Text(right_frame, height=10, width=40)
-user_answer_text.pack(side=tk.TOP, padx=5, pady=5)
+user_answer_text.pack(side=tk.TOP, padx=200, pady=10)
 
 
 # Create and place the feedback text area
 user_feedback_label = tk.Label(right_frame, text="Feedback:")
-user_feedback_label.pack(side=tk.TOP, padx=5, pady=5)
+user_feedback_label.pack(side=tk.TOP, padx=10, pady=10)
 
-user_feedback_text = tk.Text(right_frame, height=10, width=40, wrap='word', state='disabled')
-user_feedback_text.pack(side=tk.TOP, padx=5, pady=5)
+user_feedback_text = tk.Text(right_frame, height=20, width=40, wrap='word', state='disabled')
+user_feedback_text.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Create and place the submit button
 submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, command=generate_feedback)
-submit_button.pack(side=tk.BOTTOM, padx=10, pady=10)
+submit_button.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Create and place the generate progress report button
 progress_report_button = tk.Button(bottom_frame, text="Generate \nProgress Report", height=2, width=15, command=generate_progress_report)
-progress_report_button.pack(side=tk.LEFT, padx=10, pady=10)
+progress_report_button.pack(side=tk.TOP, padx=10, pady=10)
 
 
 # Add Help button
-help_button = tk.Button(bottom_frame, text="Help", command=open_help)
-help_button.pack(side=tk.LEFT, padx=10, pady=10)
-
-
+help_button = tk.Button(top_frame, text="Help", command=open_help)
+help_button.pack(side=tk.TOP, padx=5, pady=5)
 
 # Run the application
 root.mainloop()
