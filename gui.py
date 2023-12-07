@@ -294,7 +294,7 @@ submit_button = tk.Button(bottom_frame, text="Submit", height=2, width=8, comman
 submit_button.pack(side=tk.TOP, padx=10, pady=10)
 
 # Create and place the help button
-hint_button = tk.Button(bottom_frame, text="Hint", width=4, command=provide_hint)
+hint_button = tk.Button(bottom_frame, text="Hint", width=4, command=provide_hint, font=label_font)
 hint_button.pack(side=tk.TOP, padx=10, pady=5)
 
 # Create and place the generate progress report button
