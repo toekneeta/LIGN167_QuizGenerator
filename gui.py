@@ -43,10 +43,10 @@ def main():
     # all past dialog for current question
     message_history = []
 
-    # Help button
-    if st.button("?"):
-        st.info("""
-        Welcome to the LIGN 167 Quiz Generator
+    # Help sidebar
+
+    st.sidebar.markdown("""
+        Welcome to the **LIGN 167 Quiz Generator**
 
         Here's how to get started:
 
@@ -60,7 +60,7 @@ def main():
         8) Repeat!
 
         You may also click on the **Generate Progress Report** button that will generate a progress report with your overall question accuracy, the topics and difficulties that you've covered, the topics you could refresh on, and tips on how to improve!
-        """)
+    """)
 
     # Dropdown for topic selection
     topic = st.selectbox("Select a topic:", topics_list)
