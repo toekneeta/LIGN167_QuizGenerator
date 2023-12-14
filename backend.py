@@ -3,40 +3,30 @@ from openai import OpenAI
 
 class QuizGenerator:
 	def __init__(self):
-		self.model = "gpt-3.5-turbo-1106"
+		self.model =  "gpt-3.5-turbo-1106" # "gpt-4-1106-preview"
 		self.client = OpenAI()
 
 		self.topics_list = [
-		            "Supervised Learning",
-		            "Linear Regression",
-		            "Logistic Regression",
-		            "Optimization through Gradient Descent",
-		            "Multilayer Perceptrons",
-		            "Backpropagation",
-		            "Word2Vec",
-		            "Autoregressive Models",
-		            "Attention",
-		            "Transformers",
-		            "Autoregressive Language Modeling",
-		            "Masked Language Modeling",
-		            "Encoder-decoder Architectures"
-		]
+            "Supervised Learning",
+            "Linear Regression",
+            "Logistic Regression",
+            "Optimization through Gradient Descent",
+            "Multilayer Perceptrons",
+            "Backpropagation",
+            "Word2Vec",
+            "Autoregressive Models",
+            "Attention",
+            "Transformers",
+            "Autoregressive Language Modeling",
+            "Masked Language Modeling",
+            "Encoder-Decoder Architectures"
+    	]
 
 		self.difficulty_list =  ['Easy', 'Medium', 'Hard']
 
 		# questions asked for each topic
 		self.question_history = {topic: [] for topic in self.topics_list}
 
-		# counter for number of questions answered for each topic and difficulty
-		self.answered_counter = {topic: {difficulty: 0 for difficulty in self.difficulty_list} for topic in self.topics_list}
-		self.answered = 0
-
-		# counter for number of questions correct for each topic and difficulty
-		self.correct_counter = {topic: {difficulty: 0 for difficulty in self.difficulty_list} for topic in self.topics_list}
-		self.correct = 0
-
-		# all past dialog for current question
-		self.message_history = []
 
 	def get_chatgpt_response(self, messages):
 		response = self.client.chat.completions.create(
@@ -88,9 +78,9 @@ class QuizGenerator:
 	    # add question to question history for that topic
 		self.question_history[topic].append(question)
 
-		return question
+		return question, self.message_history
 
-	def provide_feedback(self, question, answer, topic, difficulty):
+	def provide_feedback(self, question, answer, topic, difficulty, message_history):
 		generate_feedback_sys_text = "Your role is to provide feedback for the user \
 	                              on their answer to a question. You will \
 	                              then start your response either with the word \
@@ -98,44 +88,40 @@ class QuizGenerator:
 	                              got the question right or wrong. Then, you will \
 	                              give an explanation in less than 50 words why they \
 	                              got the question right or wrong."
-		self.message_history.append({
+		message_history.append({
 			'role': 'user',
 			'content': answer
 		})
-		self.message_history.append({
+		message_history.append({
 			'role': 'system',
 			'content': generate_feedback_sys_text
 		})
 
-		response = self.get_chatgpt_response(self.message_history)
+		response = self.get_chatgpt_response(message_history)
 		
-		# if answer is correct, update correct_counter
+		# if answer is correct, correct=True
+		correct=False
 		if response.split()[0].lower().strip('.,!') == "correct":
-			self.correct_counter[topic][difficulty] += 1
-			self.correct += 1
-
-		# update the answered_counter
-		self.answered_counter[topic][difficulty] += 1
-		self.answered += 1
+			correct=True
 
 		# add response to message history
-		self.message_history.append({
+		message_history.append({
 			'role': 'assistant',
 			'content': response
 		})
 
-		return response
+		return response, correct, message_history
 
-	def get_progress_report_stats(self):
+	def get_progress_report_stats(self, answered_counter, correct_counter, answered, correct):
 		progress_report_stats = []
 		for topic in self.topics_list:
-			num_easy_answered = self.answered_counter[topic]['Easy']
-			num_medium_answered = self.answered_counter[topic]['Medium']
-			num_hard_answered = self.answered_counter[topic]['Hard']
+			num_easy_answered = answered_counter[topic]['Easy']
+			num_medium_answered = answered_counter[topic]['Medium']
+			num_hard_answered = answered_counter[topic]['Hard']
 
-			num_easy_correct = self.correct_counter[topic]['Easy']
-			num_medium_correct = self.correct_counter[topic]['Medium']
-			num_hard_correct = self.correct_counter[topic]['Hard']
+			num_easy_correct = correct_counter[topic]['Easy']
+			num_medium_correct = correct_counter[topic]['Medium']
+			num_hard_correct = correct_counter[topic]['Hard']
 
 			# percentage of each difficulty of question for that topic answered correctly
 			if num_easy_answered > 0:
@@ -164,15 +150,16 @@ class QuizGenerator:
 										  easy_accuracy_rate, medium_accuracy_rate, hard_accuracy_rate, topic_accuracy_rate])
 				
 
-		if self.answered > 0:
-			overall_accuracy_rate = round((self.correct / self.answered) * 100, 2)
+		if answered > 0:
+			overall_accuracy_rate = round((correct / answered) * 100, 2)
 		else:
 			overall_accuracy_rate = -1
 
 		return overall_accuracy_rate, progress_report_stats
 
-	def create_progress_report(self):
-		overall_accuracy_rate, progress_report_stats = self.get_progress_report_stats()
+	def create_progress_report(self, answered_counter, correct_counter, answered, correct):
+	
+		overall_accuracy_rate, progress_report_stats = self.get_progress_report_stats(answered_counter, correct_counter, answered, correct)
 
 		# user is considered to struggle if topic accuracy rate is less than 70%
 		struggled_topics = []
