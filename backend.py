@@ -24,8 +24,6 @@ class QuizGenerator:
 
 		self.difficulty_list =  ['Easy', 'Medium', 'Hard']
 
-		# questions asked for each topic
-		self.question_history = {topic: [] for topic in self.topics_list}
 
 
 	def get_chatgpt_response(self, messages):
@@ -35,7 +33,7 @@ class QuizGenerator:
 	    )
 		return response.choices[0].message.content
 
-	def generate_question(self, topic, difficulty):
+	def generate_question(self, topic, difficulty, question_history):
 		generate_question_sys_text = "Your role is to generate quiz questions for a class on \
 	                              deep learning for natural language understanding. \
 	                              I will provide you a topic from the course and a difficulty \
@@ -51,13 +49,13 @@ class QuizGenerator:
 	                              their answer to the question."
 
 		generate_question_user_text = "Generate a " + difficulty + " question in the topic of " + topic + \
-	    							  "Only provide the question in less than 50 words."
+	    							  ". Only provide the question in less than 50 words."
 
 	    # if there has been questions for this topic previously, don't repeat them
-		if self.question_history[topic]:
+		if question_history:
 			generate_question_user_text += " Do not use any variants of the following questions: "
 
-			for question in self.question_history[topic]:
+			for question in question_history:
 			    generate_question_user_text += question + " "
 		
 		# Restart message history
@@ -74,9 +72,6 @@ class QuizGenerator:
 			'role': 'assistant',
 			'content': question
 		})
-
-	    # add question to question history for that topic
-		self.question_history[topic].append(question)
 
 		return question, self.message_history
 
