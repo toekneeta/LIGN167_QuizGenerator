@@ -12,7 +12,7 @@ def generate_question_button():
     st.session_state['question_text'] = question
 
 #What happens when you press the Submit button
-def generate_feedback_button():
+def generate_feedback_button(answer):
     # Call the provide_feedback function and update the feedback text in session state
     feedback = qg.provide_feedback(st.session_state['question_text'], answer, topic, difficulty)
     st.session_state['feedback_text'] = feedback
@@ -83,16 +83,15 @@ topic = st.session_state['topic']
 st.session_state['difficulty'] = st.selectbox("Select Difficulty", ["Easy", "Medium", "Hard"])
 difficulty = st.session_state['difficulty']
 
-#Generate question button
-if st.button("Generate Question"):
-    generate_question_button()
-
 #Make 2 column containers on the page for the question/answer + feedback: 
 col1, col2 = st.columns(2)
 
 #Left column: question area
 with col1:
     with st.container():
+        #Generate question button
+        if st.button("Generate Question"):
+                generate_question_button()
         st.text_area("Question", value=st.session_state['question_text'], disabled=True)
         
 
@@ -101,13 +100,15 @@ with col2:
     with st.container():
         st.text_area("Enter your answer", value=st.session_state['answer_text'], disabled=False)
         answer = st.session_state["answer_text"]
+        
+        #Submit button
+        if st.button("Submit"):
+            generate_feedback_button(answer)
+        
         st.text_area("Feedback", value=st.session_state['feedback_text'], disabled=True)
         feedback = st.session_state["feedback_text"]
-
-#Submit button
-if st.button("Submit"):
-    generate_feedback_button()
-    
+        
+        
 
 #Hint button
         
