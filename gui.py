@@ -40,6 +40,9 @@ def main():
     if 'correct' not in st.session_state:
         st.session_state['correct'] = 0
 
+    if 'question_history' not in st.session_state:
+        st.session_state['question_history'] = {topic: [] for topic in topics_list}
+
     # all past dialog for current question
     message_history = []
 
@@ -70,8 +73,9 @@ def main():
 
     # Button to generate a question
     if st.button("Generate Question"):
-        question, message_history = qg.generate_question(topic, difficulty)
+        question, message_history = qg.generate_question(topic, difficulty, st.session_state['question_history'][topic])
         st.session_state['question'] = question
+        st.session_state['question_history'][topic].append(question)
         st.session_state['message_history'] = message_history
         st.write(question)
 
