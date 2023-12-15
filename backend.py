@@ -7,19 +7,19 @@ class QuizGenerator:
 		self.client = OpenAI()
 
 		self.topics_list = [
-            "Supervised Learning",
+            "Attention",
+            "Autoregressive Language Modeling",
+            "Autoregressive Models",
+            "Backpropagation",
+            "Encoder-Decoder Architectures",
             "Linear Regression",
             "Logistic Regression",
-            "Optimization through Gradient Descent",
-            "Multilayer Perceptrons",
-            "Backpropagation",
-            "Word2Vec",
-            "Autoregressive Models",
-            "Attention",
-            "Transformers",
-            "Autoregressive Language Modeling",
             "Masked Language Modeling",
-            "Encoder-Decoder Architectures"
+            "Multilayer Perceptrons",
+            "Optimization through Gradient Descent",
+            "Supervised Learning",
+            "Transformers",
+            "Word2Vec"
     	]
 
 		self.difficulty_list =  ['Easy', 'Medium', 'Hard']
@@ -187,22 +187,22 @@ class QuizGenerator:
 
 		return [overall_accuracy_rate, progress_report_stats, sorted_struggled_topics, study_tips]
 	
-	def provide_hint(self, reason):
+	def provide_hint(self, reason, message_history):
 		generate_hint_sys_text = "Your role is to provide a brief hint for the user, \
 								  based on the reason they are stuck,\
 				  				  to help them answer the question."
-		self.message_history.append({
+		message_history.append({
 			'role': 'user',
 			'content': reason
 		})
-		self.message_history.append({
+		message_history.append({
 			'role': 'system',
 			'content': generate_hint_sys_text
 		})
 
-		hint = self.get_chatgpt_response(self.message_history)
+		hint = self.get_chatgpt_response(message_history)
 
-		self.message_history.append({
+		message_history.append({
 			'role': 'assistant',
 			'content': hint
 		})

@@ -9,45 +9,41 @@ def main():
 
     st.title("LIGN 167 Quiz Generator")
 
-    topics_list = [
-            "Supervised Learning",
-            "Linear Regression",
-            "Logistic Regression",
-            "Optimization through Gradient Descent",
-            "Multilayer Perceptrons",
-            "Backpropagation",
-            "Word2Vec",
-            "Autoregressive Models",
-            "Attention",
-            "Transformers",
-            "Autoregressive Language Modeling",
-            "Masked Language Modeling",
-            "Encoder-Decoder Architectures"
-    ]
-
     difficulty_list = ["Easy", "Medium", "Hard"]
 
 
     # counter for number of questions answered for each topic and difficulty
     if 'answered_counter' not in st.session_state:
-        st.session_state['answered_counter'] = {topic: {difficulty: 0 for difficulty in difficulty_list} for topic in topics_list}
+        st.session_state['answered_counter'] = {topic: {difficulty: 0 for difficulty in difficulty_list} for topic in qg.topics_list}
     if 'answered' not in st.session_state:
         st.session_state['answered'] = 0
 
     # counter for number of questions correct for each topic and difficulty
     if 'correct_counter' not in st.session_state:
-        st.session_state['correct_counter'] = {topic: {difficulty: 0 for difficulty in difficulty_list} for topic in topics_list}
+        st.session_state['correct_counter'] = {topic: {difficulty: 0 for difficulty in difficulty_list} for topic in qg.topics_list}
     if 'correct' not in st.session_state:
         st.session_state['correct'] = 0
 
     if 'question_history' not in st.session_state:
-        st.session_state['question_history'] = {topic: [] for topic in topics_list}
+        st.session_state['question_history'] = {topic: [] for topic in qg.topics_list}
 
     if 'question' not in st.session_state:
         st.session_state['question'] = ""
 
     if "feedback" not in st.session_state:
         st.session_state['feedback'] = ""
+
+    if "hint" not in st.session_state:
+        st.session_state['hint'] = ""
+
+    if "hint_active" not in st.session_state:
+        st.session_state['hint_active'] = False
+
+    if "hint_response" not in st.session_state:
+        st.session_state['hint_response'] = ""
+
+    if "submit_hint_req" not in st.session_state:
+        st.session_state['submit_hint_req'] = False
 
     # all past dialog for current question
     message_history = []
@@ -72,7 +68,7 @@ def main():
     """)
 
     # Dropdown for topic selection
-    topic = st.selectbox("Select a topic:", topics_list)
+    topic = st.selectbox("Select a topic:", qg.topics_list)
 
     # Dropdown for difficulty selection
     difficulty = st.selectbox("Select difficulty:", difficulty_list)
@@ -83,6 +79,8 @@ def main():
         st.session_state['question'] = question
         st.session_state['question_history'][topic].append(question)
         st.session_state['message_history'] = message_history
+        st.session_state['hint'] = ""
+        st.session_state['hint_active'] = False
     
     st.text_area("Question", value=st.session_state['question'], disabled=True)
 
@@ -104,6 +102,23 @@ def main():
             st.warning("Please generate a question first.")
 
     st.text_area("Feedback", value=st.session_state['feedback'], disabled=True)
+
+    #Hint button
+    if st.button("New Hint Request"):
+        if st.session_state['question']:
+            st.session_state['hint_response'] = st.text_input("What are you struggling with?")
+            st.session_state['submit_hint_req'] = True
+        else:
+            st.warning("Plese generate a question first.")
+    
+    if st.button("Submit Hint Request", disabled=not st.session_state['submit_hint_req']):
+        st.session_state['hint'] += qg.provide_hint(st.session_state['hint_response'], st.session_state['message_history']) + "\n\n"
+        st.session_state['submit_hint_req'] = False
+        st.session_state['hint_active'] = True
+        st.experimental_rerun()
+
+    if st.session_state['hint_active']:
+        st.text_area("Hint", value=st.session_state['hint'], disabled=True)
 
     # Generate Progress Report button
     if st.button("Generate Progress Report"):

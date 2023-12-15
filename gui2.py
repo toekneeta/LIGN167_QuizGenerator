@@ -3,8 +3,12 @@ from backend2 import QuizGenerator
 
 #What happens when you press the Generate Question button
 def generate_question_button():
+    #Disable answer box
+    #st.session_state['answer_status'] = True
     #Clear answer
-    st.session_state["answer_text"] = ""
+    st.session_state['answer_text'] = ""
+    #Enable answer box
+    st.session_state['answer_status'] = False
     #Clear feedback
     st.session_state["feedback_text"] = ""
     # Call the generate_question function and update the question text in session state
@@ -54,6 +58,11 @@ if 'feedback_text' not in st.session_state:
 if 'answer_text' not in st.session_state:
     st.session_state['answer_text'] = ""
 
+#Check if 'answer_status' is already in the session state
+#If not, initialize it
+if 'answer_status' not in st.session_state:
+    st.session_state['answer_status'] = True
+
 #Check if 'topic' is already in the session state 
 #If not, initialize it
 if 'topic' not in st.session_state:
@@ -98,15 +107,13 @@ with col1:
 #Right column: answer + feedback area
 with col2:
     with st.container():
-        st.text_area("Enter your answer", value=st.session_state['answer_text'], disabled=False)
-        answer = st.session_state["answer_text"]
+        st.text_area("Enter your answer", value=st.session_state['answer_text'], disabled=st.session_state['answer_status'])
         
         #Submit button
         if st.button("Submit"):
-            generate_feedback_button(answer)
+            generate_feedback_button(st.session_state['answer_text'])
         
         st.text_area("Feedback", value=st.session_state['feedback_text'], disabled=True)
-        feedback = st.session_state["feedback_text"]
         
         
 
