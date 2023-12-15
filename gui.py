@@ -83,16 +83,17 @@ def main():
         st.session_state['message_history'] = message_history
         st.session_state['hint'] = ""
         st.session_state['hint_active'] = False
+        st.session_state['feedback'] = ""
     
     st.text_area("Question", value=st.session_state['question'], disabled=True)
 
     # Text area for answer input
-    answer = st.text_area("Your Answer:")
+    st.session_state['Answer'] = st.text_area("Your Answer:")
 
     # Button to submit an answer
     if st.button("Submit Answer"):
-        st.session_state['Answer'] = answer
         if 'question' in st.session_state:
+            answer = st.session_state['Answer']
             st.session_state['feedback'], correct, message_history = qg.provide_feedback(st.session_state['question'], answer, topic, difficulty, st.session_state['message_history'])
             st.session_state['message_history'] = message_history
             if correct:
