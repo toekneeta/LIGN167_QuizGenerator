@@ -43,6 +43,12 @@ def main():
     if 'question_history' not in st.session_state:
         st.session_state['question_history'] = {topic: [] for topic in topics_list}
 
+    if 'question' not in st.session_state:
+        st.session_state['question'] = ""
+
+    if "feedback" not in st.session_state:
+        st.session_state['feedback'] = ""
+
     # all past dialog for current question
     message_history = []
 
@@ -77,7 +83,8 @@ def main():
         st.session_state['question'] = question
         st.session_state['question_history'][topic].append(question)
         st.session_state['message_history'] = message_history
-        st.write(question)
+    
+    st.text_area("Question", value=st.session_state['question'], disabled=True)
 
     # Text area for answer input
     answer = st.text_area("Your Answer:")
@@ -86,18 +93,17 @@ def main():
     if st.button("Submit Answer"):
         st.session_state['Answer'] = answer
         if 'question' in st.session_state:
-            feedback, correct, message_history = qg.provide_feedback(st.session_state['question'], answer, topic, difficulty, st.session_state['message_history'])
+            st.session_state['feedback'], correct, message_history = qg.provide_feedback(st.session_state['question'], answer, topic, difficulty, st.session_state['message_history'])
             st.session_state['message_history'] = message_history
             if correct:
                 st.session_state['correct'] += 1
                 st.session_state['correct_counter'][topic][difficulty] += 1
             st.session_state['answered'] += 1
             st.session_state['answered_counter'][topic][difficulty] += 1
-            st.write(feedback)
         else:
             st.warning("Please generate a question first.")
 
-
+    st.text_area("Feedback", value=st.session_state['feedback'], disabled=True)
 
     # Generate Progress Report button
     if st.button("Generate Progress Report"):
