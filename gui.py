@@ -60,9 +60,11 @@ def main():
         3) Click the **Generate Question** button to create a new question
         4) A question will appear in the **Question** box
         5) Type your answer in the **Answer** box on the right
-        6) Click the **Submit** button at the bottom
-        7) Feedback will be provided in the **Feedback** box below the **Answer** box
-        8) Repeat!
+        6) If you don't know the answer, you can click the **New Hint Request** button, 
+           which will generate a hint for the current question. You can request as many hints as you want.
+        7) Click the **Submit** button at the bottom
+        8) Feedback will be provided in the **Feedback** box below the **Answer** box
+        9) Repeat!
 
         You may also click on the **Generate Progress Report** button that will generate a progress report with your overall question accuracy, the topics and difficulties that you've covered, the topics you could refresh on, and tips on how to improve!
     """)
